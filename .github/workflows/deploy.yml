@@ -1,0 +1,32 @@
+name: Deploy Dockerized FastAPI App
+
+on:
+  push:
+    branches:
+      - main
+
+# secrets: EC2_KEY, EC2_USER, EC2_HOST
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up SSH
+      run: |
+        echo "${{ secrets.EC2_KEY }}" > github-ec2.pem && chmod 600 github-ec2.pem
+
+    - name: Deploy via SSH
+      run: |
+        ssh -o StrictHostKeyChecking=no -i github-ec2.pem "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}"
+        cd cicd-example
+        git pull origin main
+
+        docker stop fastapi-app || true
+        docker rm fastapi-app || true
+
+        docker build -t fastapi-app .
+        docker run -d --name fastapi-app -p 80:80 fastapi-app
