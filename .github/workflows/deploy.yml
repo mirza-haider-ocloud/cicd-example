@@ -21,7 +21,7 @@ jobs:
 
     - name: Deploy via SSH
       run: |
-        ssh -o StrictHostKeyChecking=no -i github-ec2.pem "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}"
+        ssh -o StrictHostKeyChecking=no -i github-ec2.pem "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}" << 'EOF'
         cd /home/ubuntu/cicd-example
         git pull origin main
 
@@ -30,3 +30,4 @@ jobs:
 
         docker build -t fastapi-app .
         docker run -d --name fastapi-app -p 80:80 fastapi-app
+        EOF
