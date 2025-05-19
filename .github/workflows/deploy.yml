@@ -32,7 +32,7 @@ jobs:
           git pull origin main
         else
           echo "Directory does not exist — cloning repository"
-          git clone "$REPO_URL" "$TARGET_DIR"
+          git clone "$REPO" "$TARGET_DIR"
         fi
 
         cd "$TARGET_DIR"
