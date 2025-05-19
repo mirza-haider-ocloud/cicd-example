@@ -22,7 +22,7 @@ jobs:
     - name: Deploy via SSH
       run: |
         ssh -o StrictHostKeyChecking=no -i github-ec2.pem "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}"
-        cd cicd-example
+        cd /home/ubuntu/cicd-example
         git pull origin main
 
         docker stop fastapi-app || true
