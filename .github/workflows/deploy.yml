@@ -25,9 +25,9 @@ jobs:
         cd /home/ubuntu/cicd-example
         git pull origin main
 
-        docker stop fastapi-app || true
-        docker rm fastapi-app || true
+        sudo docker stop fastapi-app || true
+        sudo docker rm fastapi-app || true
 
-        docker build -t fastapi-app .
-        docker run -d --name fastapi-app -p 80:80 fastapi-app
+        sudo docker build -t fastapi-app .
+        sudo docker run -d --name fastapi-app -p 80:80 fastapi-app
         EOF
