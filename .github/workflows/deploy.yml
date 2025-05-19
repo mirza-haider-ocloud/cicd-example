@@ -36,6 +36,8 @@ jobs:
         fi
 
         cd "$TARGET_DIR"
+        echo DATABASE_URL=${{ secrets.DB_ENDPOINT }} >> .env
+
         sudo docker stop fastapi-app || true
         sudo docker rm fastapi-app || true
 

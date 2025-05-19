@@ -324,6 +324,7 @@ operations/variable-scripts/variable.json
 # Sentinel runtime directory
 .sentinel
 
+.env
 
 # ec2 secrets
 .pem

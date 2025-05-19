@@ -8,6 +8,42 @@ data "aws_vpc" "default" {
   default = true
 }
 
+# Create mysql database
+resource "aws_db_instance" "example" {
+  identifier_prefix = "cicd-example"
+  engine = "mysql"
+  allocated_storage = 10
+  instance_class = "db.t3.micro"
+  skip_final_snapshot = true
+  db_name = "cicdExDB"
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  publicly_accessible = true
+  
+  # Better to use variables and pass as env variables via console
+  username = "myusername"
+  password = "mypassword"
+}
+
+# Security group for db
+resource "aws_security_group" "db_sg" {
+  name = "mysql-sg"
+  description = "Allow mysql access"
+  vpc_id = data.aws_vpc.default.id
+  ingress {
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }  
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 resource "aws_security_group" "instance" {
   # Security group for ec2 Instance
   name = "cicd-instance"
@@ -35,7 +71,7 @@ resource "aws_security_group" "instance" {
   }
 }
 
-# Generate a key pair locally
+# Generate a key pair locally for ssh
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -69,9 +105,20 @@ resource "local_file" "private_key_pem" {
   file_permission = "0600"
 }
 
-output "public_dns" {
+# Ec2 outputs
+output "ec2_public_dns" {
   value = aws_instance.cicd-example.public_dns
 }
-output "public_ip" {
+output "ec2_public_ip" {
   value = aws_instance.cicd-example.public_ip
+}
+
+# Database outputs
+output "db_address" {
+  value = aws_db_instance.example.address
+  description = "Connect to database at this endpoint"
+}
+output "db_port" {
+  value = aws_db_instance.example.port
+  description = "The port the database is listening on"
 }
