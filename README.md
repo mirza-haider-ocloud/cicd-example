@@ -1,3 +1,5 @@
+#### FastAPI project with basic DB CRUD operations. Infrastructure provisioning through Terraform. CI/CD pipeline configured via Github Actions.
+
 CI/CD has been set up for this repository via github actions. However, we do need to set up infrastructure for the app. Then, we also need to set respective secret keys so github actions can proceed successfully.
 
 ## Infrastructure Provision
@@ -17,9 +19,16 @@ terraform apply
 ```
 
 ## Set secret keys on Github
-Once terraform has set up the infrastructure, it will output `public_ip` of the ec2 instance that has been launched. 
+CI/CD pipeline will require following secret keys to work:
+```
+- EC2_HOST
+- EC2_KEY
+- DB_ENDPOINT
+```
+
+Once terraform has set up the infrastructure, it will output `public_ip` of the ec2 instance and `db_address` of the MySQL database that has been launched. 
 Terraform will also create `terraform-key.pem` file in _infra_ directory.
-Take note of both the values.
+Take note of these environment variables as they will be required.
 
 Now go to Github repository settings, and replace the secret keys with these values.
 
