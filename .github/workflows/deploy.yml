@@ -1,11 +1,12 @@
 name: Deploy Dockerized FastAPI App
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
 
-# secrets: EC2_KEY, EC2_USER, EC2_HOST
+# secrets: EC2_KEY, EC2_USER, EC2_HOST, DB_ENDPOINT
 
 jobs:
   deploy:
