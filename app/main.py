@@ -52,3 +52,11 @@ def get_user(
         return "User not found!"
     else:
         return user
+
+
+@app.get("/users", response_model=list[schemas.UserResponse])
+def get_all_users(
+    db: Session = Depends(get_db)
+):
+    users = db.query(models.User).all()
+    return users
