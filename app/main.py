@@ -22,7 +22,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"Hello": "Mother Earth"}
+    return {"Hello": "Have a beautiful day"}
 
 
 
