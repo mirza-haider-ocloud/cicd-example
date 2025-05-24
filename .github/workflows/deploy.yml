@@ -16,12 +16,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
-    - name: Print Stuff
+
+    - name: Add DB url to .env
       run: |
-        pwd
-        ls
-        
+        echo DATABASE_URL=${{ secrets.DB_ENDPOINT }} >> .env
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -36,3 +35,15 @@ jobs:
         tags: |
           ${{ env.IMAGE_NAME }}:latest
           ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          
+    - name: Deploy via SSH
+      run: |
+        echo "${{ secrets.EC2_KEY }}" > github-ec2.pem && chmod 600 github-ec2.pem
+        ssh -o StrictHostKeyChecking=no -i github-ec2.pem "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}" << 'EOF'
+
+        sudo docker stop cicd-example || true
+        sudo docker rm cicd-example || true
+
+        sudo docker pull ${{ env.IMAGE_NAME }}
+        sudo docker run -d --name cicd-example -p 80:80 ${{ env.IMAGE_NAME }}
+        EOF
