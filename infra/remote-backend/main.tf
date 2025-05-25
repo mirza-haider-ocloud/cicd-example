@@ -1,4 +1,8 @@
 
+# This file creates an S3 bucket & dynamoDB table
+# to host the app's state file (for remote sharing)
+# The actual infrastructure of the app is created by infra/main.tf
+
 provider "aws" {
   region = "us-east-2"
 }
