@@ -38,8 +38,10 @@ jobs:
         VALUE=$(terraform output ec2_public_ip)
         echo "EC2_HOST=$VALUE" >> $GITHUB_ENV
 
-        VALUE=$(cat terraform-key.pem)
-        echo "EC2_KEY=$VALUE" >> $GITHUB_ENV
+        echo "VALUE<<EOF" >> $GITHUB_ENV
+        cat terraform-key.pem >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
         cd ..
 
     - name: Add DB URL to .env
