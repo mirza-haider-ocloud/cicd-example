@@ -31,7 +31,7 @@ jobs:
         export AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-        cd infra && terraform init && terraform apply  
+        cd infra && terraform init && terraform apply -auto-approve
         VALUE=$(terraform output db_address)
         echo "DB_ADDRESS=$VALUE" >> $GITHUB_ENV
 
