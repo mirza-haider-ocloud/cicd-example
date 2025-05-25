@@ -66,8 +66,6 @@ jobs:
           
     - name: Deploy via SSH
       run: |
-        echo "${{ env.EC2_KEY }}"
-
         echo "${{ env.EC2_KEY }}" > github-ec2.pem && chmod 600 github-ec2.pem
         ssh -o StrictHostKeyChecking=no -i github-ec2.pem "ubuntu"@"${{env.EC2_HOST}}" << 'EOF'
 
