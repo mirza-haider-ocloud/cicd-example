@@ -17,9 +17,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Add DB url to .env
+    - name: Provision Infrastructure via Terraform
       run: |
-        echo DATABASE_URL=${{ secrets.DB_ENDPOINT }} >> .env
+        # Set up infra if not already set up
+        # Store resource addresses (ec2, DB) to be used later
+
+        cd infra && terraform apply  
+        VALUE=$(terraform output db_address)
+        echo "DB_ADDRESS=$VALUE" >> $GITHUB_ENV
+
+        VALUE=$(terraform output ec2_public_ip)
+        echo "EC2_HOST=$VALUE" >> $GITHUB_ENV
+
+        VALUE=$(cat terraform-key.pem)
+        echo "EC2_KEY=$VALUE" >> $GITHUB_ENV
+        cd ..
+
+    - name: Add DB URL to .env
+      run: |
+        echo DATABASE_URL=${{ env.EC2_KEY }} >> .env
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
@@ -38,8 +54,8 @@ jobs:
           
     - name: Deploy via SSH
       run: |
-        echo "${{ secrets.EC2_KEY }}" > github-ec2.pem && chmod 600 github-ec2.pem
-        ssh -o StrictHostKeyChecking=no -i github-ec2.pem "${{secrets.EC2_USER}}"@"${{secrets.EC2_HOST}}" << 'EOF'
+        echo "${{ env.EC2_KEY }}" > github-ec2.pem && chmod 600 github-ec2.pem
+        ssh -o StrictHostKeyChecking=no -i github-ec2.pem "ubuntu"@"${{env.EC2_HOST}}" << 'EOF'
 
         sudo docker stop cicd-example || true
         sudo docker rm cicd-example || true

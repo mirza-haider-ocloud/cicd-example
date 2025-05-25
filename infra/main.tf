@@ -1,4 +1,17 @@
 
+# Enable remote backend for state
+terraform {
+  backend "s3" {
+    bucket = "ci-cd-example-state"
+    key = "dev/terraform.tfstate"
+    region = "us-east-2"
+
+    dynamodb_table = "ci_cd_example_locks"
+    encrypt = true
+  }
+}
+
+
 provider "aws" {
     region = "us-east-2"
 }
