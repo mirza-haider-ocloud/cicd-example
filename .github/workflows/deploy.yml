@@ -28,7 +28,7 @@ jobs:
         # Set up infra if not already set up
         # Store resource addresses (ec2, DB) to be used later
 
-        cd infra && terraform apply  
+        cd infra && terraform init && terraform apply  
         VALUE=$(terraform output db_address)
         echo "DB_ADDRESS=$VALUE" >> $GITHUB_ENV
 
