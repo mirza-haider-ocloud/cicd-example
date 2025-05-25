@@ -38,6 +38,7 @@ jobs:
         VALUE=$(terraform output ec2_public_ip)
         echo "EC2_HOST=$VALUE" >> $GITHUB_ENV
 
+        # Multiline Key-Pair to SSH to EC2 later
         echo "EC2_KEY<<EOF" >> $GITHUB_ENV
         cat terraform-key.pem >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
@@ -46,7 +47,7 @@ jobs:
 
     - name: Add DB URL to .env
       run: |
-        echo DATABASE_URL=${{ env.EC2_KEY }} >> .env
+        echo DATABASE_URL=${{ env.DB_ADDRESS }} >> .env
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
