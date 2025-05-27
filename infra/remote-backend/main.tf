@@ -3,12 +3,25 @@
 # to host the app's state file (for remote sharing)
 # The actual infrastructure of the app is created by infra/main.tf
 
+
+variable "bucket_name" {
+  description = "Name of the S3 bucket to create"
+  type        = string
+  default     = "ci-cd-example-state"
+}
+variable "dynamodb_table_name" {
+  description = "Name of the DynamoDB table to create"
+  type        = string
+  default     = "ci_cd_example_locks"
+}
+
+
 provider "aws" {
   region = "us-east-2"
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "ci-cd-example-state"
+  bucket = var.bucket_name
 
   # Prevent accidental deletion of this bucket
   lifecycle {
@@ -45,7 +58,7 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
 
 # Make dynamoDB table for locking state file
 resource "aws_dynamodb_table" "terraform_locks" {
-  name = "ci_cd_example_locks"
+  name = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key = "LockID"
   attribute {
